@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>수정된 클리커 웹게임</title>
+    <title>GIF 클리커 웹게임</title>
     <style>
         body {
             display: flex;
@@ -18,7 +18,7 @@
             display: flex;
             flex-direction: column;
             justify-content: space-between;
-            width: 300px;
+            width: 400px;
             height: 100vh;
             padding: 20px;
             box-sizing: border-box;
@@ -29,18 +29,18 @@
         }
         .button-area {
             position: relative;
-            width: 200px;
-            height: 200px;
+            width: 300px;
+            height: 300px;
             margin: auto;
         }
         #clickButton {
-            width: 100px;
-            height: 100px;
+            width: 200px;
+            height: 200px;
             border-radius: 50%;
             background-color: red;
             border: none;
             color: white;
-            font-size: 16px;
+            font-size: 24px;
             cursor: pointer;
             transition: transform 0.1s;
             position: absolute;
@@ -54,9 +54,8 @@
         }
         #autoClicker {
             position: absolute;
-            width: 20px;
-            height: 20px;
-            background-color: blue;
+            width: 50px;
+            height: 50px;
             display: none;
         }
         .upgrade-area {
@@ -78,7 +77,7 @@
         <div id="score">점수: 0</div>
         <div class="button-area">
             <button id="clickButton">클릭!</button>
-            <div id="autoClicker"></div>
+            <img id="autoClicker" src="autoclicker.gif" alt="Auto Clicker">
         </div>
         <div class="upgrade-area">
             <button id="upgradeClickPower" class="upgrade-btn">클릭 파워 업그레이드 (비용: 10)</button>
@@ -126,7 +125,7 @@
 
         function startAutoClicker() {
             let angle = 0;
-            const radius = 70; // 원 버튼과 겹치지 않는 반지름
+            const radius = 120; // GIF 크기에 맞게 반경 조정
             const centerX = buttonArea.offsetWidth / 2;
             const centerY = buttonArea.offsetHeight / 2;
 
@@ -135,7 +134,7 @@
                 const y = centerY + radius * Math.sin(angle) - autoClicker.offsetHeight / 2;
                 autoClicker.style.left = `${x}px`;
                 autoClicker.style.top = `${y}px`;
-                angle += 0.02; // 더 천천히 회전
+                angle += 0.02;
                 if (angle > 2 * Math.PI) {
                     angle -= 2 * Math.PI;
                 }
@@ -146,8 +145,8 @@
                 updateScore();
             }
 
-            setInterval(moveAutoClicker, 20); // 약 50fps로 움직임 갱신
-            setInterval(autoClick, 1000); // 1초마다 자동 클릭
+            setInterval(moveAutoClicker, 20);
+            setInterval(autoClick, 1000);
         }
 
         updateScore();
