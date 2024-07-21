@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>원형 클리커 게임</title>
+    <title>수정된 클리커 웹게임</title>
     <style>
         body {
             display: flex;
@@ -15,43 +15,142 @@
             font-family: Arial, sans-serif;
         }
         .game-container {
-            text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            width: 300px;
+            height: 100vh;
+            padding: 20px;
+            box-sizing: border-box;
         }
         #score {
-            font-size: 48px;
-            margin-bottom: 20px;
+            font-size: 24px;
+            text-align: center;
         }
-        #clickButton {
+        .button-area {
+            position: relative;
             width: 200px;
             height: 200px;
+            margin: auto;
+        }
+        #clickButton {
+            width: 100px;
+            height: 100px;
             border-radius: 50%;
-            background-color: #4CAF50;
+            background-color: red;
             border: none;
             color: white;
-            font-size: 24px;
+            font-size: 16px;
             cursor: pointer;
             transition: transform 0.1s;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 10;
         }
         #clickButton:active {
-            transform: scale(0.95);
+            transform: translate(-50%, -50%) scale(0.95);
+        }
+        #autoClicker {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background-color: blue;
+            display: none;
+        }
+        .upgrade-area {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .upgrade-btn {
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
         }
     </style>
 </head>
 <body>
     <div class="game-container">
-        <div id="score">0</div>
-        <button id="clickButton">클릭!</button>
+        <div id="score">점수: 0</div>
+        <div class="button-area">
+            <button id="clickButton">클릭!</button>
+            <div id="autoClicker"></div>
+        </div>
+        <div class="upgrade-area">
+            <button id="upgradeClickPower" class="upgrade-btn">클릭 파워 업그레이드 (비용: 10)</button>
+            <button id="upgradeAutoClicker" class="upgrade-btn">자동 클리커 구매 (비용: 30)</button>
+        </div>
     </div>
 
     <script>
         let score = 0;
+        let clickPower = 1;
+        let autoClickerActive = false;
         const scoreDisplay = document.getElementById('score');
         const clickButton = document.getElementById('clickButton');
+        const upgradeClickPowerBtn = document.getElementById('upgradeClickPower');
+        const upgradeAutoClickerBtn = document.getElementById('upgradeAutoClicker');
+        const autoClicker = document.getElementById('autoClicker');
+        const buttonArea = document.querySelector('.button-area');
 
         clickButton.addEventListener('click', () => {
-            score++;
-            scoreDisplay.textContent = score;
+            score += clickPower;
+            updateScore();
         });
+
+        upgradeClickPowerBtn.addEventListener('click', () => {
+            if (score >= 10) {
+                score -= 10;
+                clickPower += 1;
+                updateScore();
+            }
+        });
+
+        upgradeAutoClickerBtn.addEventListener('click', () => {
+            if (score >= 30 && !autoClickerActive) {
+                score -= 30;
+                autoClickerActive = true;
+                autoClicker.style.display = 'block';
+                startAutoClicker();
+                updateScore();
+            }
+        });
+
+        function updateScore() {
+            scoreDisplay.textContent = `점수: ${score}`;
+        }
+
+        function startAutoClicker() {
+            let angle = 0;
+            const radius = 70; // 원 버튼과 겹치지 않는 반지름
+            const centerX = buttonArea.offsetWidth / 2;
+            const centerY = buttonArea.offsetHeight / 2;
+
+            function moveAutoClicker() {
+                const x = centerX + radius * Math.cos(angle) - autoClicker.offsetWidth / 2;
+                const y = centerY + radius * Math.sin(angle) - autoClicker.offsetHeight / 2;
+                autoClicker.style.left = `${x}px`;
+                autoClicker.style.top = `${y}px`;
+                angle += 0.02; // 더 천천히 회전
+                if (angle > 2 * Math.PI) {
+                    angle -= 2 * Math.PI;
+                }
+            }
+
+            function autoClick() {
+                score += clickPower;
+                updateScore();
+            }
+
+            setInterval(moveAutoClicker, 20); // 약 50fps로 움직임 갱신
+            setInterval(autoClick, 1000); // 1초마다 자동 클릭
+        }
+
+        updateScore();
     </script>
 </body>
 </html>
