@@ -95,7 +95,7 @@
         const upgradeAutoClickerBtn = document.getElementById('upgradeAutoClicker');
         const buttonArea = document.querySelector('.button-area');
 
-        const autoClickerGifUrl = 'autoclicker.gif';
+        const autoClickerGifUrl = 'https://github.com/your-username/your-repo/raw/main/autoclicker.gif';
 
         clickButton.addEventListener('click', () => {
             score += clickPower;
@@ -128,8 +128,11 @@
             autoClicker.src = autoClickerGifUrl;
             buttonArea.appendChild(autoClicker);
 
-            autoClickers.push(autoClicker);
-            updateAutoClickerPositions();
+            autoClickers.push({
+                element: autoClicker,
+                angle: 0
+            });
+
             startAutoClickerScoring();
         }
 
@@ -137,38 +140,33 @@
             const centerX = buttonArea.offsetWidth / 2;
             const centerY = buttonArea.offsetHeight / 2;
             const radius = 150;
+            const totalClickers = autoClickers.length;
 
             autoClickers.forEach((clicker, index) => {
-                const angle = (index / autoClickers.length) * 2 * Math.PI;
-                const x = centerX + radius * Math.cos(angle) - clicker.offsetWidth / 2;
-                const y = centerY + radius * Math.sin(angle) - clicker.offsetHeight / 2;
-                clicker.style.left = `${x}px`;
-                clicker.style.top = `${y}px`;
+                clicker.angle += 0.02; // 회전 속도
+                const angle = (index / totalClickers) * 2 * Math.PI + clicker.angle;
+                const x = centerX + radius * Math.cos(angle) - clicker.element.offsetWidth / 2;
+                const y = centerY + radius * Math.sin(angle) - clicker.element.offsetHeight / 2;
+                clicker.element.style.left = `${x}px`;
+                clicker.element.style.top = `${y}px`;
             });
         }
 
         function startAutoClickerScoring() {
-            setInterval(() => {
-                score += 1;
-                updateScore();
-            }, 1000);
+            if (autoClickers.length === 1) {
+                setInterval(() => {
+                    score += autoClickers.length;
+                    updateScore();
+                }, 1000);
+            }
         }
 
-        // 자동 클리커 회전 애니메이션
-        setInterval(() => {
-            const centerX = buttonArea.offsetWidth / 2;
-            const centerY = buttonArea.offsetHeight / 2;
-            const radius = 150;
+        function gameLoop() {
+            updateAutoClickerPositions();
+            requestAnimationFrame(gameLoop);
+        }
 
-            autoClickers.forEach((clicker, index) => {
-                const angle = ((index / autoClickers.length) * 2 * Math.PI) + (Date.now() / 2000);
-                const x = centerX + radius * Math.cos(angle) - clicker.offsetWidth / 2;
-                const y = centerY + radius * Math.sin(angle) - clicker.offsetHeight / 2;
-                clicker.style.left = `${x}px`;
-                clicker.style.top = `${y}px`;
-            });
-        }, 50);
-
+        gameLoop();
         updateScore();
     </script>
 </body>
