@@ -80,7 +80,7 @@
         </div>
         <div class="upgrade-area">
             <button id="upgradeClickPower" class="upgrade-btn">클릭 파워 업그레이드 (비용: 10)</button>
-            <button id="upgradeAutoClicker" class="upgrade-btn">자동 클리커 구매 (비용: 30)</button>
+            <button id="upgradeAutoClicker" class="upgrade-btn">자동 클리커 구매 (비용: 50)</button>
         </div>
     </div>
 
@@ -88,6 +88,7 @@
         let score = 0;
         let clickPower = 1;
         let autoClickers = [];
+        let autoClickerPower = 0;
         const maxAutoClickers = 10;
         const scoreDisplay = document.getElementById('score');
         const clickButton = document.getElementById('clickButton');
@@ -95,7 +96,6 @@
         const upgradeAutoClickerBtn = document.getElementById('upgradeAutoClicker');
         const buttonArea = document.querySelector('.button-area');
 
-        // GitHub의 raw 파일 URL을 사용하세요. 아래 URL을 실제 GIF 파일의 URL로 교체해주세요.
         const autoClickerGifUrl = 'autoclicker.gif';
 
         clickButton.addEventListener('click', () => {
@@ -112,8 +112,8 @@
         });
 
         upgradeAutoClickerBtn.addEventListener('click', () => {
-            if (score >= 30 && autoClickers.length < maxAutoClickers) {
-                score -= 30;
+            if (score >= 50 && autoClickers.length < maxAutoClickers) {
+                score -= 50;
                 addAutoClicker();
                 updateScore();
             }
@@ -134,7 +134,8 @@
             autoClickers.push({ element: autoClicker, angle });
 
             positionAutoClicker(autoClicker, angle, radius);
-            startAutoClicker(autoClicker, angle, radius);
+            startAutoClickerAnimation(autoClicker, angle, radius);
+            autoClickerPower += 1; // 자동 클리커 파워 증가
         }
 
         function positionAutoClicker(element, angle, radius) {
@@ -146,16 +147,20 @@
             element.style.top = `${y}px`;
         }
 
-        function startAutoClicker(element, startAngle, radius) {
+        function startAutoClickerAnimation(element, startAngle, radius) {
             let angle = startAngle;
             setInterval(() => {
                 angle += 0.05;
                 if (angle > 2 * Math.PI) angle -= 2 * Math.PI;
                 positionAutoClicker(element, angle, radius);
-                score += clickPower;
-                updateScore();
             }, 50);
         }
+
+        // 자동 클리커의 점수 증가를 별도로 처리
+        setInterval(() => {
+            score += autoClickerPower;
+            updateScore();
+        }, 1000);
 
         updateScore();
     </script>
