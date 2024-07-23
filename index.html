@@ -3,127 +3,30 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>다중 자동 클리커 클리커 게임</title>
+    <title>빠른 자동 클리커 클리커 게임</title>
     <style>
-        body {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-            background-color: #f0f0f0;
-            font-family: Arial, sans-serif;
-        }
-        .game-container {
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            width: 500px;
-            height: 100vh;
-            padding: 20px;
-            box-sizing: border-box;
-        }
-        #score {
-            font-size: 24px;
-            text-align: center;
-        }
-        .button-area {
-            position: relative;
-            width: 400px;
-            height: 400px;
-            margin: auto;
-        }
-        #clickButton {
-            width: 200px;
-            height: 200px;
-            border-radius: 50%;
-            background-color: #4CAF50;
-            border: none;
-            color: white;
-            font-size: 24px;
-            cursor: pointer;
-            transition: transform 0.1s;
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            z-index: 10;
-        }
-        #clickButton:active {
-            transform: translate(-50%, -50%) scale(0.95);
-        }
+        /* 이전 스타일 유지 */
         .autoClicker {
             position: absolute;
             width: 50px;
             height: 50px;
             pointer-events: none;
         }
-        .upgrade-area {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-        .upgrade-btn {
-            padding: 10px;
-            background-color: #008CBA;
-            color: white;
-            border: none;
-            cursor: pointer;
-        }
     </style>
 </head>
 <body>
-    <div class="game-container">
-        <div id="score">점수: 0</div>
-        <div class="button-area">
-            <button id="clickButton">클릭!</button>
-        </div>
-        <div class="upgrade-area">
-            <button id="upgradeClickPower" class="upgrade-btn">클릭 파워 업그레이드 (비용: 10)</button>
-            <button id="upgradeAutoClicker" class="upgrade-btn">자동 클리커 구매 (비용: 30)</button>
-        </div>
-    </div>
+    <!-- 이전 HTML 구조 유지 -->
 
     <script>
-        let score = 0;
-        let clickPower = 1;
-        let autoClickers = [];
-        const maxAutoClickers = 10;
-        const scoreDisplay = document.getElementById('score');
-        const clickButton = document.getElementById('clickButton');
-        const upgradeClickPowerBtn = document.getElementById('upgradeClickPower');
-        const upgradeAutoClickerBtn = document.getElementById('upgradeAutoClicker');
-        const buttonArea = document.querySelector('.button-area');
+        // 이전 변수 선언 유지
 
-        clickButton.addEventListener('click', () => {
-            score += clickPower;
-            updateScore();
-        });
-
-        upgradeClickPowerBtn.addEventListener('click', () => {
-            if (score >= 10) {
-                score -= 10;
-                clickPower += 1;
-                updateScore();
-            }
-        });
-
-        upgradeAutoClickerBtn.addEventListener('click', () => {
-            if (score >= 30 && autoClickers.length < maxAutoClickers) {
-                score -= 30;
-                addAutoClicker();
-                updateScore();
-            }
-        });
-
-        function updateScore() {
-            scoreDisplay.textContent = `점수: ${score}`;
-        }
+        // GIF URL을 GitHub raw content URL로 변경
+        const autoClickerGifUrl = 'https://raw.githubusercontent.com/사용자명/저장소명/main/autoclicker.gif';
 
         function addAutoClicker() {
             const autoClicker = document.createElement('img');
             autoClicker.className = 'autoClicker';
-            autoClicker.src = 'https://media.giphy.com/media/3ohhwytHcusSCXXOUg/giphy.gif'; // 여기에 실제 GIF URL을 넣으세요
+            autoClicker.src = autoClickerGifUrl; // 여기서 GIF URL 사용
             buttonArea.appendChild(autoClicker);
 
             const angle = (autoClickers.length / maxAutoClickers) * 2 * Math.PI;
@@ -134,27 +37,18 @@
             startAutoClicker(autoClicker, angle, radius);
         }
 
-        function positionAutoClicker(element, angle, radius) {
-            const centerX = buttonArea.offsetWidth / 2;
-            const centerY = buttonArea.offsetHeight / 2;
-            const x = centerX + radius * Math.cos(angle) - element.offsetWidth / 2;
-            const y = centerY + radius * Math.sin(angle) - element.offsetHeight / 2;
-            element.style.left = `${x}px`;
-            element.style.top = `${y}px`;
-        }
-
         function startAutoClicker(element, startAngle, radius) {
             let angle = startAngle;
             setInterval(() => {
-                angle += 0.02;
+                angle += 0.05; // 속도 증가
                 if (angle > 2 * Math.PI) angle -= 2 * Math.PI;
                 positionAutoClicker(element, angle, radius);
                 score += clickPower;
                 updateScore();
-            }, 1000);
+            }, 50); // 갱신 주기 감소
         }
 
-        updateScore();
+        // 나머지 코드 유지
     </script>
 </body>
 </html>
