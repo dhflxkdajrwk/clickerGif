@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>개선된 클리커 게임</title>
+    <title>천천히 움직이는 클리커 게임</title>
     <style>
         body {
             display: flex;
@@ -18,8 +18,8 @@
             display: flex;
             flex-direction: column;
             justify-content: space-between;
-            width: 500px;
-            height: 100vh;
+            width: 800px;
+            height: 800px;
             padding: 20px;
             box-sizing: border-box;
         }
@@ -29,8 +29,8 @@
         }
         .button-area {
             position: relative;
-            width: 400px;
-            height: 400px;
+            width: 760px;
+            height: 560px;
             margin: auto;
         }
         #clickButton {
@@ -54,14 +54,13 @@
         }
         .autoClicker {
             position: absolute;
-            width: 50px;
-            height: 50px;
-            pointer-events: none;
+            width: 220px;
+            height: 200px;
+            transition: all 1s linear;
         }
         .upgrade-area {
             display: flex;
-            flex-direction: column;
-            gap: 10px;
+            justify-content: space-around;
         }
         .upgrade-btn {
             padding: 10px;
@@ -88,7 +87,7 @@
         let score = 0;
         let clickPower = 1;
         let autoClickers = [];
-        const maxAutoClickers = 10;
+        const maxAutoClickers = 6; // GIF 크기를 고려하여 최대 개수 조정
         const scoreDisplay = document.getElementById('score');
         const clickButton = document.getElementById('clickButton');
         const upgradeClickPowerBtn = document.getElementById('upgradeClickPower');
@@ -130,21 +129,20 @@
 
             autoClickers.push({
                 element: autoClicker,
-                angle: 0
+                angle: (autoClickers.length / maxAutoClickers) * 2 * Math.PI
             });
 
+            updateAutoClickerPositions();
             startAutoClickerScoring();
         }
 
         function updateAutoClickerPositions() {
             const centerX = buttonArea.offsetWidth / 2;
             const centerY = buttonArea.offsetHeight / 2;
-            const radius = 150;
-            const totalClickers = autoClickers.length;
+            const radius = 250; // 반지름 증가
 
             autoClickers.forEach((clicker, index) => {
-                clicker.angle += 0.02; // 회전 속도
-                const angle = (index / totalClickers) * 2 * Math.PI + clicker.angle;
+                const angle = clicker.angle;
                 const x = centerX + radius * Math.cos(angle) - clicker.element.offsetWidth / 2;
                 const y = centerY + radius * Math.sin(angle) - clicker.element.offsetHeight / 2;
                 clicker.element.style.left = `${x}px`;
@@ -161,12 +159,18 @@
             }
         }
 
-        function gameLoop() {
+        function rotateAutoClickers() {
+            autoClickers.forEach(clicker => {
+                clicker.angle += 0.002; // 회전 속도 대폭 감소
+                if (clicker.angle > 2 * Math.PI) {
+                    clicker.angle -= 2 * Math.PI;
+                }
+            });
             updateAutoClickerPositions();
-            requestAnimationFrame(gameLoop);
+            requestAnimationFrame(rotateAutoClickers);
         }
 
-        gameLoop();
+        rotateAutoClickers();
         updateScore();
     </script>
 </body>
