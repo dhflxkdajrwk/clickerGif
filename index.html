@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>천천히 움직이는 클리커 게임</title>
+    <title>클리커 게임</title>
     <style>
         body {
             display: flex;
@@ -18,29 +18,33 @@
             display: flex;
             flex-direction: column;
             justify-content: space-between;
-            width: 800px;
-            height: 800px;
+            width: 400px;
+            height: 500px;
             padding: 20px;
             box-sizing: border-box;
+            background-color: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
         }
         #score {
             font-size: 24px;
             text-align: center;
+            margin-bottom: 20px;
         }
         .button-area {
             position: relative;
-            width: 760px;
-            height: 560px;
+            width: 300px;
+            height: 300px;
             margin: auto;
         }
         #clickButton {
-            width: 200px;
-            height: 200px;
+            width: 100px;
+            height: 100px;
             border-radius: 50%;
             background-color: #4CAF50;
             border: none;
             color: white;
-            font-size: 24px;
+            font-size: 18px;
             cursor: pointer;
             transition: transform 0.1s;
             position: absolute;
@@ -54,9 +58,10 @@
         }
         .autoClicker {
             position: absolute;
-            width: 220px;
-            height: 200px;
-            transition: all 1s linear;
+            width: 44px;
+            height: 40px;
+            transition: all 0.5s linear;
+            pointer-events: none;
         }
         .upgrade-area {
             display: flex;
@@ -68,6 +73,7 @@
             color: white;
             border: none;
             cursor: pointer;
+            border-radius: 5px;
         }
     </style>
 </head>
@@ -87,14 +93,15 @@
         let score = 0;
         let clickPower = 1;
         let autoClickers = [];
-        const maxAutoClickers = 6; // GIF 크기를 고려하여 최대 개수 조정
+        const maxAutoClickers = 8;
         const scoreDisplay = document.getElementById('score');
         const clickButton = document.getElementById('clickButton');
         const upgradeClickPowerBtn = document.getElementById('upgradeClickPower');
         const upgradeAutoClickerBtn = document.getElementById('upgradeAutoClicker');
         const buttonArea = document.querySelector('.button-area');
 
-        const autoClickerGifUrl = 'autoclicker.gif';
+        // 실제 GIF URL로 교체해주세요
+        const autoClickerGifUrl = 'https://example.com/path/to/your/autoclicker.gif';
 
         clickButton.addEventListener('click', () => {
             score += clickPower;
@@ -122,14 +129,24 @@
         }
 
         function addAutoClicker() {
+            if (autoClickers.length >= maxAutoClickers) return;
+
             const autoClicker = document.createElement('img');
             autoClicker.className = 'autoClicker';
             autoClicker.src = autoClickerGifUrl;
             buttonArea.appendChild(autoClicker);
 
+            let angle;
+            if (autoClickers.length === 0) {
+                angle = 0;
+            } else {
+                const lastClicker = autoClickers[autoClickers.length - 1];
+                angle = lastClicker.angle + (2 * Math.PI / maxAutoClickers);
+            }
+
             autoClickers.push({
                 element: autoClicker,
-                angle: (autoClickers.length / maxAutoClickers) * 2 * Math.PI
+                angle: angle
             });
 
             updateAutoClickerPositions();
@@ -139,12 +156,11 @@
         function updateAutoClickerPositions() {
             const centerX = buttonArea.offsetWidth / 2;
             const centerY = buttonArea.offsetHeight / 2;
-            const radius = 250; // 반지름 증가
+            const radius = 120;
 
-            autoClickers.forEach((clicker, index) => {
-                const angle = clicker.angle;
-                const x = centerX + radius * Math.cos(angle) - clicker.element.offsetWidth / 2;
-                const y = centerY + radius * Math.sin(angle) - clicker.element.offsetHeight / 2;
+            autoClickers.forEach((clicker) => {
+                const x = centerX + radius * Math.cos(clicker.angle) - clicker.element.offsetWidth / 2;
+                const y = centerY + radius * Math.sin(clicker.angle) - clicker.element.offsetHeight / 2;
                 clicker.element.style.left = `${x}px`;
                 clicker.element.style.top = `${y}px`;
             });
@@ -160,8 +176,9 @@
         }
 
         function rotateAutoClickers() {
+            const rotationSpeed = 0.005;
             autoClickers.forEach(clicker => {
-                clicker.angle += 0.002; // 회전 속도 대폭 감소
+                clicker.angle += rotationSpeed;
                 if (clicker.angle > 2 * Math.PI) {
                     clicker.angle -= 2 * Math.PI;
                 }
