@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>클리커 게임</title>
+    <title>개선된 클리커 게임</title>
     <style>
         body {
             display: flex;
@@ -88,7 +88,6 @@
         let score = 0;
         let clickPower = 1;
         let autoClickers = [];
-        let autoClickerPower = 0;
         const maxAutoClickers = 10;
         const scoreDisplay = document.getElementById('score');
         const clickButton = document.getElementById('clickButton');
@@ -135,7 +134,6 @@
 
             positionAutoClicker(autoClicker, angle, radius);
             startAutoClickerAnimation(autoClicker, angle, radius);
-            autoClickerPower += 1; // 자동 클리커 파워 증가
         }
 
         function positionAutoClicker(element, angle, radius) {
@@ -150,17 +148,24 @@
         function startAutoClickerAnimation(element, startAngle, radius) {
             let angle = startAngle;
             setInterval(() => {
-                angle += 0.05;
+                angle += 0.02; // 회전 속도 감소
                 if (angle > 2 * Math.PI) angle -= 2 * Math.PI;
                 positionAutoClicker(element, angle, radius);
             }, 50);
         }
 
-        // 자동 클리커의 점수 증가를 별도로 처리
-        setInterval(() => {
-            score += autoClickerPower;
-            updateScore();
-        }, 1000);
+        // 각 자동 클리커마다 독립적으로 점수 증가
+        function startAutoClickerScoring() {
+            autoClickers.forEach(() => {
+                setInterval(() => {
+                    score += 1;
+                    updateScore();
+                }, 1000);
+            });
+        }
+
+        // 1초마다 자동 클리커의 점수 증가 로직 실행
+        setInterval(startAutoClickerScoring, 1000);
 
         updateScore();
     </script>
