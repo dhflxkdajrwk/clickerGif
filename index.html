@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>클리커 게임</title>
+    <title>음악이 있는 클리커 게임</title>
     <style>
         body {
             display: flex;
@@ -15,6 +15,7 @@
             font-family: Arial, sans-serif;
         }
         .game-container {
+            position: relative;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
@@ -75,10 +76,25 @@
             cursor: pointer;
             border-radius: 5px;
         }
+        .volume-control {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            display: flex;
+            align-items: center;
+        }
+        #volumeSlider {
+            width: 100px;
+            margin-left: 10px;
+        }
     </style>
 </head>
 <body>
     <div class="game-container">
+        <div class="volume-control">
+            <label for="volumeSlider">🔊</label>
+            <input type="range" id="volumeSlider" min="0" max="1" step="0.1" value="0.5">
+        </div>
         <div id="score">점수: 0</div>
         <div class="button-area">
             <button id="clickButton">클릭!</button>
@@ -88,6 +104,11 @@
             <button id="upgradeAutoClicker" class="upgrade-btn">자동 클리커 구매 (비용: 50)</button>
         </div>
     </div>
+
+    <audio id="backgroundMusic" loop>
+        <source src="https://example.com/path/to/your/music.mp3" type="audio/mpeg">
+        Your browser does not support the audio element.
+    </audio>
 
     <script>
         let score = 0;
@@ -99,9 +120,20 @@
         const upgradeClickPowerBtn = document.getElementById('upgradeClickPower');
         const upgradeAutoClickerBtn = document.getElementById('upgradeAutoClicker');
         const buttonArea = document.querySelector('.button-area');
+        const volumeSlider = document.getElementById('volumeSlider');
+        const backgroundMusic = document.getElementById('backgroundMusic');
 
         // 실제 GIF URL로 교체해주세요
-        const autoClickerGifUrl = 'autoclicker.gif';
+        const autoClickerGifUrl = 'Music1.mp3';
+
+        // 배경 음악 설정
+        backgroundMusic.volume = 0.5;
+        backgroundMusic.play();
+
+        // 볼륨 조절
+        volumeSlider.addEventListener('input', (e) => {
+            backgroundMusic.volume = e.target.value;
+        });
 
         clickButton.addEventListener('click', () => {
             score += clickPower;
