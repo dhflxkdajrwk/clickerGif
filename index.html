@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>음악이 있는 클리커 게임</title>
+    <title>오디오가 있는 클리커 게임</title>
     <style>
         body {
             display: flex;
@@ -76,24 +76,36 @@
             cursor: pointer;
             border-radius: 5px;
         }
-        .volume-control {
+        .audio-control {
             position: absolute;
             top: 10px;
             right: 10px;
             display: flex;
             align-items: center;
+            background-color: rgba(255, 255, 255, 0.8);
+            padding: 5px;
+            border-radius: 5px;
         }
         #volumeSlider {
             width: 100px;
-            margin-left: 10px;
+            margin: 0 10px;
+        }
+        #playPauseButton {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
+            border-radius: 3px;
         }
     </style>
 </head>
 <body>
     <div class="game-container">
-        <div class="volume-control">
-            <label for="volumeSlider">🔊</label>
+        <div class="audio-control">
+            <button id="playPauseButton">재생</button>
             <input type="range" id="volumeSlider" min="0" max="1" step="0.1" value="0.5">
+            <span id="volumeDisplay">50%</span>
         </div>
         <div id="score">점수: 0</div>
         <div class="button-area">
@@ -106,7 +118,7 @@
     </div>
 
     <audio id="backgroundMusic" loop>
-        <source src="music.mp3" type="audio/mpeg">
+        <source src="Music1.mp3" type="audio/mpeg">
         Your browser does not support the audio element.
     </audio>
 
@@ -120,20 +132,43 @@
         const upgradeClickPowerBtn = document.getElementById('upgradeClickPower');
         const upgradeAutoClickerBtn = document.getElementById('upgradeAutoClicker');
         const buttonArea = document.querySelector('.button-area');
-        const volumeSlider = document.getElementById('volumeSlider');
         const backgroundMusic = document.getElementById('backgroundMusic');
+        const playPauseButton = document.getElementById('playPauseButton');
+        const volumeSlider = document.getElementById('volumeSlider');
+        const volumeDisplay = document.getElementById('volumeDisplay');
 
         // 실제 GIF URL로 교체해주세요
         const autoClickerGifUrl = 'autoclicker.gif';
 
-        // 배경 음악 설정
-        backgroundMusic.volume = 0.5;
-        backgroundMusic.play();
+        // 오디오 로딩 상태 확인
+        backgroundMusic.addEventListener('loadeddata', () => {
+            console.log("오디오 파일이 로드되었습니다.");
+        });
+
+        backgroundMusic.addEventListener('error', (e) => {
+            console.error("오디오 파일 로딩 중 오류 발생:", e);
+        });
+
+        // 재생/일시정지 기능
+        playPauseButton.addEventListener('click', () => {
+            if (backgroundMusic.paused) {
+                backgroundMusic.play();
+                playPauseButton.textContent = '일시정지';
+            } else {
+                backgroundMusic.pause();
+                playPauseButton.textContent = '재생';
+            }
+        });
 
         // 볼륨 조절
         volumeSlider.addEventListener('input', (e) => {
-            backgroundMusic.volume = e.target.value;
+            const volume = e.target.value;
+            backgroundMusic.volume = volume;
+            volumeDisplay.textContent = `${Math.round(volume * 100)}%`;
         });
+
+        // 초기 볼륨 설정
+        backgroundMusic.volume = volumeSlider.value;
 
         clickButton.addEventListener('click', () => {
             score += clickPower;
